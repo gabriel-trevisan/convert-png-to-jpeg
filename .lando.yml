@@ -1,0 +1,7 @@
+name: convert-png-to-jpeg
+recipe: lamp
+config:
+  php: '7.3'
+  webroot: src
+  composer_version: '2.0.0'
+  via: apache
