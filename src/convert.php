@@ -1,25 +1,36 @@
 <?php
 
+require '../vendor/autoload.php';
+use Intervention\Image\ImageManagerStatic as Image;
+
 $path = '../images';
 
 $directories = array_diff(scandir($path), ['.', '..']);
 
 $countDirectories = count($directories);
 
-foreach ($directories as $index => $directory) {
-    $originalFile = "../images/{$directory}/profile.png";
-    $outputFile = "../images/$directory/profile.jpg";
-    $quality = 100;
+set_time_limit(1200);
+foreach ($directories as $directory) {
+    try {    
+        $originalFile = "../images/{$directory}/profile.png";
+        $outputFile = "../images/$directory/profile.jpg";
+        $outputFile50 = "../images/$directory/profile-50.jpg";
+        $quality = 100;
 
-    $image = imagecreatefrompng($originalFile);
-    $result = imagejpeg($image, $outputFile, $quality);
-    imagedestroy($image);
+        $image = Image::make($originalFile);
+        $image->encode('jpg', 100);
+        $image->save($outputFile);
 
-    if(!$result){
-        echo "Error convert id $directory image";
-    }
+        //Resize image
+        $image->resize(50, 50); 
+        $image->save($outputFile50);
 
-    if($index > $countDirectories){
-        echo "Finished!";
+        $image->destroy();
+
+    } catch (Exception $e){
+        echo "<br>";
+        echo $e->getMessage()." Directory:".$directory;
     }
 }
+
+echo "Finished";
